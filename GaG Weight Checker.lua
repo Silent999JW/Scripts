@@ -62,7 +62,7 @@ for _, playerFarm in ipairs(farmFolder:GetChildren()) do
                             billboard.Size = UDim2.new(0, 90, 0, 25)
                             billboard.StudsOffset = Vector3.new(0, part.Size.Y + 1.5, 0)
                             billboard.LightInfluence = 0
-                            billboard.MaxDistance = 100
+                            billboard.MaxDistance = 10000
                             billboard.Parent = screenGui
 
                             local label = Instance.new("TextLabel")
