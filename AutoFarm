@@ -1,9 +1,116 @@
-for i,v in pairs(workspace.Cashiers:GetChildren()) do
-    if v.Name == "VAULT" then
-        v:Destroy()
+-- OPTI
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
+local Workspace = workspace
+
+-- Create PlayerPlatform under local player
+local existing = Character:FindFirstChild("PlayerPlatform")
+if existing then existing:Destroy() end
+
+local PlayerPlatform = Instance.new("Part")
+PlayerPlatform.Name = "PlayerPlatform"
+PlayerPlatform.Size = Vector3.new(10, 1, 10)
+PlayerPlatform.Anchored = true
+PlayerPlatform.CanCollide = true
+PlayerPlatform.Material = Enum.Material.Neon
+PlayerPlatform.Color = Color3.fromRGB(0, 255, 255)
+PlayerPlatform.Transparency = 0.3
+
+PlayerPlatform.Position = HumanoidRootPart.Position - Vector3.new(0, HumanoidRootPart.Size.Y / 2 + 2.22 + PlayerPlatform.Size.Y / 2, 0)
+PlayerPlatform.Parent = workspace
+
+-- Remove all models in workspace except the local player's character
+for _, obj in ipairs(Workspace:GetChildren()) do
+    if obj:IsA("Model") and obj.Name ~= LocalPlayer.Name then
+        obj:Destroy()
     end
 end
-task.wait(.1)
+
+-- Keep only selected instances in Ignored; delete others
+local ignored = Workspace:FindFirstChild("Ignored")
+if ignored then
+    local keepNames = {
+        Drop = true,
+        Shop = true,
+        Spawn = true,
+    }
+
+    for _, obj in ipairs(ignored:GetChildren()) do
+        if not keepNames[obj.Name] then
+            obj:Destroy()
+        end
+    end
+end
+
+-- Destroy all ParticleEmitters anywhere in workspace
+for _, obj in ipairs(Workspace:GetDescendants()) do
+    if obj:IsA("ParticleEmitter") then
+        obj:Destroy()
+    end
+end
+
+-- Delete workspace.MAP completely
+local map = Workspace:FindFirstChild("MAP")
+if map then
+    map:Destroy()
+end
+
+-- Keep only [Knife] - $164 in Shop
+local shop = Workspace:FindFirstChild("Ignored") and Workspace.Ignored:FindFirstChild("Shop")
+if shop then
+    for _, v in ipairs(shop:GetChildren()) do
+        if v:IsA("Model") and v.Name ~= "[Knife] - $164" then
+            v:Destroy()
+        end
+    end
+end
+
+-- Platform creation under Heads in Cashiers + remove VAULT models
+local cashiers = Workspace:FindFirstChild("Cashiers")
+if cashiers then
+    -- Destroy any "VAULT" model inside Cashiers
+    for i, v in pairs(cashiers:GetChildren()) do
+        if v.Name == "VAULT" then
+            v:Destroy()
+        end
+    end
+
+    for _, cashier in ipairs(cashiers:GetChildren()) do
+        if cashier:IsA("Model") then
+            -- Remove old platform inside this cashier
+            local oldPlatform = cashier:FindFirstChild("Cashier Platform")
+            if oldPlatform then
+                oldPlatform:Destroy()
+            end
+
+            -- Look for Head inside the cashier model
+            local head = cashier:FindFirstChild("Head")
+            if head and head:IsA("BasePart") then
+                local platform = Instance.new("Part")
+                platform.Name = "Cashier Platform"
+                platform.Size = Vector3.new(30, 0.5, 30)
+                platform.Anchored = true
+                platform.CanCollide = true
+                platform.Material = Enum.Material.Neon
+                platform.Color = Color3.fromRGB(255, 0, 255)
+                platform.Transparency = 0.7
+
+                local headPos = head.Position
+                local headSize = head.Size
+                local platformY = headPos.Y - (headSize.Y / 2) - 5 - (platform.Size.Y / 2)
+                platform.Position = Vector3.new(headPos.X, platformY, headPos.Z)
+
+                platform.Parent = cashier
+            end
+        end
+    end
+else
+    warn("No Cashiers folder found in workspace")
+end
+task.wait(.2)
+-- STARTING THE FARM
 
 if (_G.EXC ~= nil) then
 	warn("already executed")
@@ -1072,3 +1179,4 @@ task.spawn(function()
 		end
 	end
 end)
+workspace.PlayerPlatform:Destroy()
