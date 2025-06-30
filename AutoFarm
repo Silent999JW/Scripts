@@ -1,3 +1,10 @@
+for i,v in pairs(workspace.Cashiers:GetChildren()) do
+    if v.Name == "VAULT" then
+        v:Destroy()
+    end
+end
+task.wait(.1)
+
 if (_G.EXC ~= nil) then
 	warn("already executed")
 	return 
