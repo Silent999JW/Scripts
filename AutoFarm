@@ -1111,7 +1111,7 @@ task.spawn(function()
 					Root.CFrame = Cashier.Head.CFrame + Cashier.Head.CFrame.LookVector * Vector3.new(-2.2, -1, -2.2) + Vector3.new(0, -2, 0)
 				end
 				
-				task.wait(0.33)
+				task.wait(0.1)
 				Attack()
 			until (Cashier.Humanoid.Health <= 0) or (IsDead() == true) or (Shutdown == true) or (os.time()-Start>=16)
 
