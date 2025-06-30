@@ -5,6 +5,13 @@ local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
 local Workspace = workspace
 
+-- Destroy all folders in workspace except "Players", "Ignored", and "Cashiers"
+for i, v in pairs(Workspace:GetChildren()) do
+    if v:IsA("Folder") and v.Name ~= "Players" and v.Name ~= "Ignored" and v.Name ~= "Cashiers" then
+        v:Destroy()
+    end
+end
+
 -- Create PlayerPlatform under local player
 local existing = Character:FindFirstChild("PlayerPlatform")
 if existing then existing:Destroy() end
@@ -16,7 +23,7 @@ PlayerPlatform.Anchored = true
 PlayerPlatform.CanCollide = true
 PlayerPlatform.Material = Enum.Material.Neon
 PlayerPlatform.Color = Color3.fromRGB(0, 255, 255)
-PlayerPlatform.Transparency = 0.3
+PlayerPlatform.Transparency = 0.7
 
 PlayerPlatform.Position = HumanoidRootPart.Position - Vector3.new(0, HumanoidRootPart.Size.Y / 2 + 2.22 + PlayerPlatform.Size.Y / 2, 0)
 PlayerPlatform.Parent = workspace
@@ -57,12 +64,40 @@ if map then
     map:Destroy()
 end
 
--- Keep only [Knife] - $164 in Shop
+-- Keep only [Knife] - $164 in Shop and add platform under it
 local shop = Workspace:FindFirstChild("Ignored") and Workspace.Ignored:FindFirstChild("Shop")
 if shop then
     for _, v in ipairs(shop:GetChildren()) do
-        if v:IsA("Model") and v.Name ~= "[Knife] - $164" then
-            v:Destroy()
+        if v:IsA("Model") then
+            if v.Name ~= "[Knife] - $164" then
+                v:Destroy()
+            else
+                -- Remove old Knife Platform if exists
+                local oldKnifePlatform = v:FindFirstChild("Knife Platform")
+                if oldKnifePlatform then
+                    oldKnifePlatform:Destroy()
+                end
+
+                -- Create platform under Knife's PrimaryPart or Head or HumanoidRootPart
+                local basePart = v.PrimaryPart or v:FindFirstChild("Head") or v:FindFirstChild("HumanoidRootPart")
+                if basePart and basePart:IsA("BasePart") then
+                    local knifePlatform = Instance.new("Part")
+                    knifePlatform.Name = "Knife Platform"
+                    knifePlatform.Size = Vector3.new(20, 0.5, 20)
+                    knifePlatform.Anchored = true
+                    knifePlatform.CanCollide = true
+                    knifePlatform.Material = Enum.Material.Neon
+                    knifePlatform.Color = Color3.fromRGB(0, 255, 255)
+                    knifePlatform.Transparency = 0.5
+
+                    local basePos = basePart.Position
+                    local baseSize = basePart.Size
+                    local platformY = basePos.Y - (baseSize.Y / 2) - 3 - (knifePlatform.Size.Y / 2)
+                    knifePlatform.Position = Vector3.new(basePos.X, platformY, basePos.Z)
+
+                    knifePlatform.Parent = v
+                end
+            end
         end
     end
 end
@@ -106,9 +141,8 @@ if cashiers then
             end
         end
     end
-else
-    warn("No Cashiers folder found in workspace")
 end
+
 task.wait(.2)
 -- STARTING THE FARM
 
