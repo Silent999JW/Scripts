@@ -1197,7 +1197,7 @@ task.spawn(function()
 			pcall(function()
 				for i,v in pairs(_G.AutofarmSettings.Codes) do 
 					game:GetService("ReplicatedStorage").MainEvent:FireServer("EnterPromoCode", v)
-					task.wait(2)
+					task.wait(10)
 				end
 			end)
 		end)
