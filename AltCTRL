@@ -1,0 +1,12 @@
+getgenv().Settings = {
+    ["HostID"] = 8883209991,
+    ["Prefix"] = ".",
+    ["FPS"] = 5,
+    ["PerformanceMode"] = true,
+    ["Buyer"] = "" -- showing cash of player
+}
+
+getgenv().Alts = {
+    8883195124
+}
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Silent999JW/Scripts/main/Alt%20Control", true))()
